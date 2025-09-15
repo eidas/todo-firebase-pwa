@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Read JSON input from stdin
+input=$(cat)
+
+# Extract information from JSON
+current_dir=$(echo "$input" | jq -r '.workspace.current_dir')
+model_name=$(echo "$input" | jq -r '.model.display_name')
+output_style=$(echo "$input" | jq -r '.output_style.name')
+
+# Get directory name
+dir_name=$(basename "$current_dir")
+
+# Get git branch (if in a git repository)
+git_branch=$(cd "$current_dir" 2>/dev/null && git branch --show-current 2>/dev/null || echo '')
+
+# Build status line
+printf '%s' "$dir_name"
+
+if [ -n "$git_branch" ]; then
+    printf ' (%s)' "$git_branch"
+fi
+
+printf ' | %s' "$model_name"
+
+if [ "$output_style" != "null" ] && [ -n "$output_style" ]; then
+    printf ' | %s' "$output_style"
+fi
