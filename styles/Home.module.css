@@ -234,3 +234,72 @@
     flex-direction: column;
   }
 }
+
+/* Subtask related styles */
+.todoItemContainer {
+  margin-bottom: 8px;
+}
+
+.todoTextContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.todoActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.expandButton {
+  background: none;
+  border: none;
+  color: #667eea;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-size: 12px;
+  transform: rotate(-90deg);
+}
+
+.expandButton:hover {
+  background: #f7fafc;
+  color: #553c9a;
+}
+
+.expandButton.expanded {
+  transform: rotate(0deg);
+}
+
+.subtaskSection {
+  animation: slideDown 0.3s ease-out;
+  overflow: hidden;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+/* Enhanced todo item styles */
+.todoItem {
+  padding: 16px;
+  border-radius: 8px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.todoItem:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}

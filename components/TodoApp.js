@@ -14,9 +14,11 @@ import {
 import { useAuth } from "../contexts/AuthContext";
 import { useOfflineSync } from "../hooks/useOfflineSync";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useSubtasks } from "../hooks/useSubtasks";
 import UserProfile from "./UserProfile";
 import PWAInstallPrompt from "./PWAInstallPrompt";
 import OfflineIndicator from "./OfflineIndicator";
+import TodoItem from "./TodoItem";
 import styles from "../styles/Home.module.css";
 
 export default function TodoApp({ db }) {
@@ -38,6 +40,23 @@ export default function TodoApp({ db }) {
       });
     }
   };
+
+  // サブタスク機能の初期化
+  const {
+    addSubtask,
+    toggleSubtask,
+    deleteSubtask,
+    getTaskProgress,
+    processSubtasks,
+  } = useSubtasks({
+    db,
+    currentUser,
+    todos,
+    setTodos,
+    setLocalTodos,
+    addToSyncQueue,
+    showNotification
+  });
 
   const requestNotificationPermission = async () => {
     if ("Notification" in window && Notification.permission === "default") {
@@ -103,15 +122,21 @@ export default function TodoApp({ db }) {
     }
   }, [isOnline, processSyncQueue, currentUser, db, fetchTodos]);
 
-  const addTodo = async (e) => {
+  const addTodo = async (e, parentId = null) => {
     e.preventDefault();
     if (!newTodo.trim() || !currentUser) return;
+
+    // 同じレベルでの最大orderを取得
+    const existingTodos = todos.filter(todo => todo.parentId === parentId);
+    const maxOrder = existingTodos.length > 0 ? Math.max(...existingTodos.map(t => t.order || 0)) : 0;
 
     const todoData = {
       text: newTodo.trim(),
       completed: false,
       createdAt: new Date().toISOString(),
       userId: currentUser.uid,
+      parentId: parentId,
+      order: maxOrder + 1,
     };
 
     const tempId = `temp-${Date.now()}`;
@@ -205,14 +230,18 @@ export default function TodoApp({ db }) {
     }
   };
 
-  const filteredTodos = todos.filter((todo) => {
+  // メインタスクとサブタスクを処理
+  const { mainTodos, subtasksByParent } = processSubtasks(todos);
+
+  // フィルタリングされたメインタスク
+  const filteredTodos = mainTodos.filter((todo) => {
     if (filter === "active") return !todo.completed;
     if (filter === "completed") return todo.completed;
     return true;
-  });
+  }).sort((a, b) => (a.order || 0) - (b.order || 0));
 
-  const activeTodosCount = todos.filter((todo) => !todo.completed).length;
-  const completedTodosCount = todos.filter((todo) => todo.completed).length;
+  const activeTodosCount = mainTodos.filter((todo) => !todo.completed).length;
+  const completedTodosCount = mainTodos.filter((todo) => todo.completed).length;
 
   if (loading) {
     return (
@@ -289,27 +318,17 @@ export default function TodoApp({ db }) {
             </div>
           ) : (
             filteredTodos.map((todo) => (
-              <div key={todo.id} className={styles.todoItem}>
-                <div className={styles.todoContent}>
-                  <input
-                    type="checkbox"
-                    checked={todo.completed}
-                    onChange={() => toggleTodo(todo.id, todo.completed)}
-                    className={styles.checkbox}
-                  />
-                  <span
-                    className={`${styles.todoText} ${todo.completed ? styles.completed : ""}`}
-                  >
-                    {todo.text}
-                  </span>
-                </div>
-                <button
-                  onClick={() => deleteTodo(todo.id)}
-                  className={styles.deleteButton}
-                >
-                  削除
-                </button>
-              </div>
+              <TodoItem
+                key={todo.id}
+                todo={todo}
+                subtasks={subtasksByParent[todo.id] || []}
+                onToggle={toggleTodo}
+                onDelete={deleteTodo}
+                onToggleSubtask={toggleSubtask}
+                onDeleteSubtask={deleteSubtask}
+                onAddSubtask={addSubtask}
+                getTaskProgress={(taskId) => getTaskProgress(taskId, subtasksByParent)}
+              />
             ))
           )}
         </div>

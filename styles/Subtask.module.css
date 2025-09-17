@@ -1,0 +1,209 @@
+.subtaskContainer {
+  margin-left: 24px;
+  margin-top: 8px;
+  border-left: 2px solid #e2e8f0;
+  padding-left: 16px;
+  position: relative;
+}
+
+.subtaskContainer::before {
+  content: '';
+  position: absolute;
+  left: -2px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, #3b82f6 0%, #e2e8f0 100%);
+}
+
+.subtaskItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  background: #f8fafc;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.subtaskItem:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  transform: translateX(2px);
+}
+
+.subtaskContent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.subtaskCheckbox {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: #3b82f6;
+}
+
+.subtaskText {
+  font-size: 0.9rem;
+  color: #374151;
+  transition: all 0.2s ease;
+}
+
+.subtaskText.completed {
+  text-decoration: line-through;
+  color: #9ca3af;
+  opacity: 0.7;
+}
+
+.deleteButton {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  opacity: 0.6;
+}
+
+.deleteButton:hover {
+  background: #fef2f2;
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.addSubtaskForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: #ffffff;
+  border: 2px dashed #cbd5e1;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.subtaskInput {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: #ffffff;
+}
+
+.subtaskInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.addSubtaskActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.confirmButton,
+.cancelButton {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.confirmButton {
+  background: #3b82f6;
+  color: white;
+}
+
+.confirmButton:hover {
+  background: #2563eb;
+}
+
+.cancelButton {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.cancelButton:hover {
+  background: #e5e7eb;
+}
+
+.addSubtaskButton {
+  background: none;
+  border: 2px dashed #cbd5e1;
+  color: #6b7280;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.addSubtaskButton:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background: #f8fafc;
+}
+
+/* アニメーション */
+.subtaskItem {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+  .subtaskContainer {
+    margin-left: 16px;
+    padding-left: 12px;
+  }
+
+  .subtaskItem {
+    padding: 6px 8px;
+  }
+
+  .subtaskText {
+    font-size: 0.85rem;
+  }
+
+  .deleteButton {
+    font-size: 16px;
+    padding: 2px 6px;
+  }
+
+  .addSubtaskForm {
+    padding: 8px;
+  }
+
+  .addSubtaskActions {
+    gap: 6px;
+  }
+
+  .confirmButton,
+  .cancelButton {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+}
